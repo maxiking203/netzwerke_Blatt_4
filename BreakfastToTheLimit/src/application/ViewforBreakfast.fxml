@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ViewController">
+   <center>
+      <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="624.0" prefWidth="503.0">
+               <children>
+                  <Label layoutX="50.0" layoutY="50.0" text="Paula Pünktlich:">
+                     <font>
+                        <Font name="Arial Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="50.0" layoutY="200.0" text="Lothar Late:">
+                     <font>
+                        <Font name="Arial Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="50.0" layoutY="350.0" text="Ich:">
+                     <font>
+                        <Font name="Arial Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="pPStreet" layoutX="50.0" layoutY="75.0" prefHeight="30.0" prefWidth="260.0" promptText="Straße u. Hausnr." />
+                  <TextField fx:id="pPPLZ" layoutX="50.0" layoutY="125.0" prefHeight="30.0" prefWidth="180.0" promptText="PLZ" />
+                  <ChoiceBox fx:id="pPKindOf" layoutX="320.0" layoutY="125.0" prefWidth="150.0" />
+                  <TextField fx:id="pPTime" layoutX="320.0" layoutY="75.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
+                  <TextField fx:id="lLStreet" layoutX="50.0" layoutY="225.0" prefHeight="30.0" prefWidth="260.0" promptText="Straße u. Hausnr." />
+                  <TextField fx:id="lLPLZ" layoutX="50.0" layoutY="275.0" prefHeight="30.0" prefWidth="180.0" promptText="PLZ" />
+                  <TextField fx:id="iPLZ" layoutX="50.0" layoutY="425.0" prefHeight="30.0" prefWidth="180.0" promptText="PLZ" />
+                  <TextField fx:id="iStreet" layoutX="50.0" layoutY="375.0" prefHeight="30.0" prefWidth="260.0" promptText="Straße u. Hausnr." />
+                  <TextField fx:id="lLTime" layoutX="320.0" layoutY="225.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
+                  <TextField fx:id="iTime" layoutX="320.0" layoutY="375.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
+                  <ChoiceBox fx:id="iKindOf" layoutX="320.0" layoutY="425.0" prefWidth="150.0" />
+                  <ChoiceBox fx:id="lLKindOf" layoutX="320.0" layoutY="275.0" prefWidth="150.0" />
+               </children>
+            </AnchorPane>
+            <Button fx:id="pPDone" layoutX="550.0" layoutY="100.0" mnemonicParsing="false" onAction="#pPEnd" prefHeight="30.0" prefWidth="150.0" text="Paula Abfahrt!" />
+            <Button fx:id="iDone" layoutX="550.0" layoutY="400.0" mnemonicParsing="false" onAction="#iEnd" prefHeight="30.0" prefWidth="150.0" text="Ich Abfahrt!" />
+            <Button fx:id="lLDone" layoutX="550.0" layoutY="250.0" mnemonicParsing="false" onAction="#lLEnd" prefHeight="30.0" prefWidth="150.0" text="Lothar Abfahrt!" />
+         </children>
+      </Pane>
+   </center>
+</BorderPane>
