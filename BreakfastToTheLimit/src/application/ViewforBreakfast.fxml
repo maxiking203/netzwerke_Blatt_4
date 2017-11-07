@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ViewController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ViewController">
    <center>
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -30,18 +30,22 @@
                         <Font name="Arial Bold" size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="pPStreet" layoutX="50.0" layoutY="75.0" prefHeight="30.0" prefWidth="260.0" promptText="Straße u. Hausnr." />
-                  <TextField fx:id="pPPLZ" layoutX="50.0" layoutY="125.0" prefHeight="30.0" prefWidth="180.0" promptText="PLZ" />
-                  <ChoiceBox fx:id="pPKindOf" layoutX="320.0" layoutY="125.0" prefWidth="150.0" />
-                  <TextField fx:id="pPTime" layoutX="320.0" layoutY="75.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
-                  <TextField fx:id="lLStreet" layoutX="50.0" layoutY="225.0" prefHeight="30.0" prefWidth="260.0" promptText="Straße u. Hausnr." />
-                  <TextField fx:id="lLPLZ" layoutX="50.0" layoutY="275.0" prefHeight="30.0" prefWidth="180.0" promptText="PLZ" />
-                  <TextField fx:id="iPLZ" layoutX="50.0" layoutY="425.0" prefHeight="30.0" prefWidth="180.0" promptText="PLZ" />
-                  <TextField fx:id="iStreet" layoutX="50.0" layoutY="375.0" prefHeight="30.0" prefWidth="260.0" promptText="Straße u. Hausnr." />
-                  <TextField fx:id="lLTime" layoutX="320.0" layoutY="225.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
-                  <TextField fx:id="iTime" layoutX="320.0" layoutY="375.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
-                  <ChoiceBox fx:id="iKindOf" layoutX="320.0" layoutY="425.0" prefWidth="150.0" />
-                  <ChoiceBox fx:id="lLKindOf" layoutX="320.0" layoutY="275.0" prefWidth="150.0" />
+                  <TextField fx:id="pPStreet" layoutX="50.0" layoutY="75.0" prefHeight="30.0" prefWidth="200.0" promptText="Straße" />
+                  <TextField fx:id="pPPalce" layoutX="50.0" layoutY="125.0" prefHeight="30.0" prefWidth="180.0" promptText="Ort" />
+                  <ChoiceBox fx:id="pPKindOf" layoutX="330.0" layoutY="125.0" prefWidth="180.0" />
+                  <TextField fx:id="pPTime" layoutX="330.0" layoutY="75.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
+                  <TextField fx:id="lLStreet" layoutX="50.0" layoutY="225.0" prefHeight="30.0" prefWidth="200.0" promptText="Straße" />
+                  <TextField fx:id="lLPlace" layoutX="50.0" layoutY="275.0" prefHeight="30.0" prefWidth="180.0" promptText="Ort" />
+                  <TextField fx:id="iPace" layoutX="50.0" layoutY="425.0" prefHeight="30.0" prefWidth="180.0" promptText="Ort" />
+                  <TextField fx:id="iStreet" layoutX="50.0" layoutY="375.0" prefHeight="30.0" prefWidth="200.0" promptText="Straße" />
+                  <TextField fx:id="lLTime" layoutX="330.0" layoutY="225.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
+                  <TextField fx:id="iTime" layoutX="330.0" layoutY="375.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
+                  <ChoiceBox fx:id="iKindOf" layoutX="330.0" layoutY="425.0" prefWidth="180.0" />
+                  <ChoiceBox fx:id="lLKindOf" layoutX="330.0" layoutY="275.0" prefWidth="180.0" />
+                  <Button fx:id="insert" layoutX="50.0" layoutY="500.0" mnemonicParsing="false" onAction="#toSend" prefHeight="30.0" prefWidth="460.0" text="Eingabe beenden" />
+                  <TextField fx:id="pPNr" layoutX="270.0" layoutY="75.0" prefHeight="30.0" prefWidth="40.0" promptText="Nr." />
+                  <TextField fx:id="iNr" layoutX="270.0" layoutY="375.0" prefHeight="30.0" prefWidth="40.0" promptText="Nr." />
+                  <TextField fx:id="lLNr" layoutX="270.0" layoutY="225.0" prefHeight="30.0" prefWidth="40.0" promptText="Nr." />
                </children>
             </AnchorPane>
             <Button fx:id="pPDone" layoutX="550.0" layoutY="100.0" mnemonicParsing="false" onAction="#pPEnd" prefHeight="30.0" prefWidth="150.0" text="Paula Abfahrt!" />
