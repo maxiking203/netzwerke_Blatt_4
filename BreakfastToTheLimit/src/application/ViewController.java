@@ -106,10 +106,15 @@ public class ViewController implements Initializable {
 	
 	//Insert finished, start request with input
 	public void toSend() {
-//		String pAdr = pPStreet.getText() + " " + pPPlace.getText();
+		String pAdr = pPStreet.getText().replace(" ", "") + "+" + pPNr.getText() + "+" + pPPlace.getText();
 //		String pTime = pPTime.getText();
-//		String pKind = pPKindOf.getSelectionModel().getSelectedItem();
-//		
+		String pMode = getMode(pPKindOf.getSelectionModel().getSelectedItem());
+		
+		System.out.println(pAdr);
+		System.out.println(pMode);
+		
+		
+		
 //		String lAdr = lLStreet.getText() + " " + lLPlace.getText();
 //		String lTime = lLTime.getText();
 //		String lKind = lLKindOf.getSelectionModel().getSelectedItem();
@@ -118,13 +123,13 @@ public class ViewController implements Initializable {
 //		String iKind = iKindOf.getSelectionModel().getSelectedItem();
 //		String strITime  = iTime.getText();
 //		
-//		doRequest(pAdr, pTime, pKind);
+		doRequest(pAdr, pMode);
 //		doRequest(lAdr, lTime, lKind);
-		doRequest();
+//		doRequest();
 	}
 	
-	private void doRequest() {
-		String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + HOME + "&destinations=" + TEST + "&key=AIzaSyD5FrhCIemscBuwJYQwoO6wLRuHceirDaY";
+	private void doRequest(String adr, String mode) {
+		String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + HOME + "&destinations=" + adr + "&mode=" + mode + "&departure_time=now&traffic_mode=best_guess&key=AIzaSyD5FrhCIemscBuwJYQwoO6wLRuHceirDaY";
 			try {
 				HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
 				con.setRequestMethod("GET");
@@ -153,8 +158,23 @@ public class ViewController implements Initializable {
 
 				e.printStackTrace();
 			}
+	}
+	
+	private String getMode(String kind) {
 
-
+		if(kind.equals("zu Fuﬂ")) {
+			return "walking";
+		}
+		else if (kind.equals("Rad")) {
+			return "bicycling";
+		}
+		else if (kind.equals("÷PNV")) {
+			return "transit";
+		}
+		else {
+			return "driving";
+		}
+		
 	}
 	
 

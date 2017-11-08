@@ -31,12 +31,12 @@
                      </font>
                   </Label>
                   <TextField fx:id="pPStreet" layoutX="50.0" layoutY="75.0" prefHeight="30.0" prefWidth="200.0" promptText="Straße" />
-                  <TextField fx:id="pPPalce" layoutX="50.0" layoutY="125.0" prefHeight="30.0" prefWidth="180.0" promptText="Ort" />
+                  <TextField fx:id="pPPlace" layoutX="50.0" layoutY="125.0" prefHeight="30.0" prefWidth="180.0" promptText="Ort" />
                   <ChoiceBox fx:id="pPKindOf" layoutX="330.0" layoutY="125.0" prefWidth="180.0" />
                   <TextField fx:id="pPTime" layoutX="330.0" layoutY="75.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
                   <TextField fx:id="lLStreet" layoutX="50.0" layoutY="225.0" prefHeight="30.0" prefWidth="200.0" promptText="Straße" />
                   <TextField fx:id="lLPlace" layoutX="50.0" layoutY="275.0" prefHeight="30.0" prefWidth="180.0" promptText="Ort" />
-                  <TextField fx:id="iPace" layoutX="50.0" layoutY="425.0" prefHeight="30.0" prefWidth="180.0" promptText="Ort" />
+                  <TextField fx:id="iPlace" layoutX="50.0" layoutY="425.0" prefHeight="30.0" prefWidth="180.0" promptText="Ort" />
                   <TextField fx:id="iStreet" layoutX="50.0" layoutY="375.0" prefHeight="30.0" prefWidth="200.0" promptText="Straße" />
                   <TextField fx:id="lLTime" layoutX="330.0" layoutY="225.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
                   <TextField fx:id="iTime" layoutX="330.0" layoutY="375.0" prefHeight="30.0" prefWidth="180.0" promptText="Arbeitsbeginn" />
