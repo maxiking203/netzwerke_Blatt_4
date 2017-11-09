@@ -5,9 +5,23 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +32,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 
@@ -40,6 +55,8 @@ public class ViewController implements Initializable {
 	TextField pPTime;
 	@FXML
 	Button pPDone;
+	@FXML
+	TextArea pPInfo;
     
 	//Eingabe und Button Lothar Late
 	@FXML
@@ -87,6 +104,8 @@ public class ViewController implements Initializable {
 		iKindOf.setItems(FXCollections.observableArrayList("Auto", "zu Fuß", "Rad", "ÖPNV"));
 		iKindOf.getSelectionModel().selectFirst();;
 		
+		pPInfo.setEditable(false);;
+		
 	}
 	
 	//Paul Pünktlich left for work
@@ -107,56 +126,84 @@ public class ViewController implements Initializable {
 	//Insert finished, start request with input
 	public void toSend() {
 		String pAdr = pPStreet.getText().replace(" ", "") + "+" + pPNr.getText() + "+" + pPPlace.getText();
-//		String pTime = pPTime.getText();
+		String tmpTime[] = pPTime.getText().split(":");
+		//in Seconds
+		long pTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
 		String pMode = getMode(pPKindOf.getSelectionModel().getSelectedItem());
 		
-		System.out.println(pAdr);
-		System.out.println(pMode);
-		
-		
-		
-//		String lAdr = lLStreet.getText() + " " + lLPlace.getText();
-//		String lTime = lLTime.getText();
-//		String lKind = lLKindOf.getSelectionModel().getSelectedItem();
+//		String lAdr = lLStreet.getText().replace(" ", "") + "+" + lLNr.getText() + "+" + lLPlace.getText();
+//		tmpTime = lLTime.getText().split(":");
+//		long lTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+//		String lMode = getMode(lLKindOf.getSelectionModel().getSelectedItem());
 //		
-//		String iAdr  = iStreet.getText() + ", " + iPlace.getText();
-//		String iKind = iKindOf.getSelectionModel().getSelectedItem();
-//		String strITime  = iTime.getText();
+//		String iAdr  = iStreet.getText().replace(" ", "") + "+" + iNr.getText() + "+" + iPlace.getText();
+//		tmpTime = iTime.getText().split(":");
+//		long iTimeS = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+//		String iMode = getMode(iKindOf.getSelectionModel().getSelectedItem());
 //		
-		doRequest(pAdr, pMode);
-//		doRequest(lAdr, lTime, lKind);
-//		doRequest();
+		long pDuration = doRequest(pAdr, pMode);
+//		long lLeave = doRequest(lAdr, lMode);
+//		long iLeave = doRequest(iAdr, iMode);
+		pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
+
 	}
 	
-	private void doRequest(String adr, String mode) {
+	private String getLeaveTime(long time, long duration) {
+		long tmp = time - duration;
+		long hours = (tmp / 60) / 60;
+		long min = (tmp - (hours * 60 * 60))/ 60;
+		return hours + ":" + min;
+	}
+	
+	private long doRequest(String adr, String mode) {
 		String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + HOME + "&destinations=" + adr + "&mode=" + mode + "&departure_time=now&traffic_mode=best_guess&key=AIzaSyD5FrhCIemscBuwJYQwoO6wLRuHceirDaY";
 			try {
-				HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
-				con.setRequestMethod("GET");
-				//add request header
-				//con.setRequestProperty("User-Agent", USER_AGENT);
+				//Verweundung von HttpUrlConnction
+//				HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
+//				con.setRequestMethod("GET");
+//				//add request header
+//				//con.setRequestProperty("User-Agent", USER_AGENT);
+//
+//				int responseCode = con.getResponseCode();
+//				con.get
+//
+//				System.out.println("\nSending 'GET' request to URL : " + url);
+//				System.out.println("Response Code : " + responseCode);
+//
+//				BufferedReader in = new BufferedReader(
+//				        new InputStreamReader(con.getInputStream()));
+//				String inputLine;
+//				StringBuffer response = new StringBuffer();
+//
+//				while ((inputLine = in.readLine()) != null) {
+//					response.append(inputLine);
+//				}
+//				in.close();
+//				con.disconnect();
+//
+//				//print result
+//				System.out.println(response.toString());
+				
+				//Verwedung von httpClient
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpGet httpget = new HttpGet(url);
+				HttpResponse response = httpclient.execute(httpget);
 
-				int responseCode = con.getResponseCode();
-				System.out.println("\nSending 'GET' request to URL : " + url);
-				System.out.println("Response Code : " + responseCode);
-
-				BufferedReader in = new BufferedReader(
-				        new InputStreamReader(con.getInputStream()));
-				String inputLine;
-				StringBuffer response = new StringBuffer();
-
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-				con.disconnect();
-
-				//print result
-				System.out.println(response.toString());
+				JSONObject jsonObj = (JSONObject) new JSONParser().parse(EntityUtils.toString(response.getEntity()));
+				JSONArray jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("rows").toString()));
+				jsonObj = (JSONObject) jsonArray.get(0);
+				jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("elements").toString()));
+				jsonObj = (JSONObject) jsonArray.get(0);
+				jsonObj = (JSONObject) new JSONParser().parse((jsonObj.get("duration_in_traffic").toString()));
+				return (long) jsonObj.get("value");
+				
 				
 			} catch (IOException e) {
-
 				e.printStackTrace();
+				return 0;
+			} catch (org.json.simple.parser.ParseException e) {
+				e.printStackTrace();
+				return 0;
 			}
 	}
 	
@@ -176,6 +223,13 @@ public class ViewController implements Initializable {
 		}
 		
 	}
+	
+//	private long arrivaleTime(long time) {
+//		DateFormat dfm = new SimpleDateFormat("yyyyMMdd");
+//		dfm.setTimeZone(TimeZone.getTimeZone("UTC+01:00"));
+//		dfm.Ins
+//		return 0;
+//	}
 	
 
 }
