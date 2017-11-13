@@ -8,6 +8,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
@@ -86,7 +87,8 @@ public class ViewController implements Initializable {
 	@FXML
 	Button iDone;
 
-	
+	@FXML
+	Button connect;
 	@FXML
 	Button insert;
 	
@@ -123,6 +125,10 @@ public class ViewController implements Initializable {
 		
 	}
 	
+	private void toCnnect() {
+		
+	}
+	
 	//Insert finished, start request with input
 	public void toSend() {
 		String pAdr = pPStreet.getText().replace(" ", "") + "+" + pPNr.getText() + "+" + pPPlace.getText();
@@ -135,7 +141,7 @@ public class ViewController implements Initializable {
 //		tmpTime = lLTime.getText().split(":");
 //		long lTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
 //		String lMode = getMode(lLKindOf.getSelectionModel().getSelectedItem());
-//		
+		
 //		String iAdr  = iStreet.getText().replace(" ", "") + "+" + iNr.getText() + "+" + iPlace.getText();
 //		tmpTime = iTime.getText().split(":");
 //		long iTimeS = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
@@ -144,8 +150,18 @@ public class ViewController implements Initializable {
 		long pDuration = doRequest(pAdr, pMode);
 //		long lLeave = doRequest(lAdr, lMode);
 //		long iLeave = doRequest(iAdr, iMode);
+		
+		//how much time till, have to leave in Seconds
+		long pLeftTime = getTimeToGo(pTime);
 		pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
 
+	}
+	
+	private long getTimeToGo(long time) {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		String sysTime[] = sdf.format(new Date()).toString().split(":");
+		long tmpTime = (Integer.parseInt(sysTime[0]) * 60 + Integer.parseInt(sysTime[1])) * 60;
+		return time - tmpTime;
 	}
 	
 	private String getLeaveTime(long time, long duration) {
@@ -190,8 +206,10 @@ public class ViewController implements Initializable {
 				HttpResponse response = httpclient.execute(httpget);
 
 				JSONObject jsonObj = (JSONObject) new JSONParser().parse(EntityUtils.toString(response.getEntity()));
+				System.out.println(jsonObj.toString());
 				JSONArray jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("rows").toString()));
 				jsonObj = (JSONObject) jsonArray.get(0);
+				System.out.println(jsonObj.toString());
 				jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("elements").toString()));
 				jsonObj = (JSONObject) jsonArray.get(0);
 				jsonObj = (JSONObject) new JSONParser().parse((jsonObj.get("duration_in_traffic").toString()));
