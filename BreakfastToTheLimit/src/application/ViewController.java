@@ -24,6 +24,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -92,6 +93,10 @@ public class ViewController implements Initializable {
 	@FXML
 	Button insert;
 	
+	private boolean pLeft = false;
+	private boolean lLeft = false;
+	private boolean iLeft = false;
+	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		// set choice box data for Paula Pünktlich
@@ -111,21 +116,22 @@ public class ViewController implements Initializable {
 	}
 	
 	//Paul Pünktlich left for work
-	public void pPEnd() {
-		
+	public synchronized void pPEnd() {
+		pLeft = true;
+		pPInfo.setText("Paula allready left");
 	}
 	
 	//Lothar Late left for work
 	public void lLEnd() {
-		
+		lLeft = true;
 	}
 	
 	//I left for work
 	public void iEnd() {
-		
+		iLeft = true;
 	}
 	
-	private void toCnnect() {
+	public void toConnect() {
 		
 	}
 	
@@ -136,6 +142,7 @@ public class ViewController implements Initializable {
 		//in Seconds
 		long pTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
 		String pMode = getMode(pPKindOf.getSelectionModel().getSelectedItem());
+		long pLeftTime;
 		
 //		String lAdr = lLStreet.getText().replace(" ", "") + "+" + lLNr.getText() + "+" + lLPlace.getText();
 //		tmpTime = lLTime.getText().split(":");
@@ -147,21 +154,29 @@ public class ViewController implements Initializable {
 //		long iTimeS = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
 //		String iMode = getMode(iKindOf.getSelectionModel().getSelectedItem());
 //		
-		long pDuration = doRequest(pAdr, pMode);
-//		long lLeave = doRequest(lAdr, lMode);
-//		long iLeave = doRequest(iAdr, iMode);
+		new Thread (new Runnable() {
+			public void run() {
+				while(!pLeft) {
 		
-		//how much time till, have to leave in Seconds
-		long pLeftTime = getTimeToGo(pTime);
-		pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
-
+					if(!pLeft) {
+						long pDuration = doRequest(pAdr, pMode);
+						//how much time till, have to leave in Seconds
+						getTimeToGo(pTime, pDuration);
+						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
+						System.out.println("A");
+					}
+			
+				}
+			}	
+		}
+	).start();
 	}
 	
-	private long getTimeToGo(long time) {
+	private long getTimeToGo(long time, long duration) {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		String sysTime[] = sdf.format(new Date()).toString().split(":");
 		long tmpTime = (Integer.parseInt(sysTime[0]) * 60 + Integer.parseInt(sysTime[1])) * 60;
-		return time - tmpTime;
+		return time - duration - tmpTime;
 	}
 	
 	private String getLeaveTime(long time, long duration) {
@@ -172,44 +187,25 @@ public class ViewController implements Initializable {
 	}
 	
 	private long doRequest(String adr, String mode) {
+		adr.replace("ß", "ss");
+		adr.replace("ä", "ae");
+		adr.replace("ö", "oe");
+		adr.replace("ü", "ue");
+		adr.replace("Ä", "Ae");
+		adr.replace("Ö", "Oe");
+		adr.replace("Ü", "Ue");
 		String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + HOME + "&destinations=" + adr + "&mode=" + mode + "&departure_time=now&traffic_mode=best_guess&key=AIzaSyD5FrhCIemscBuwJYQwoO6wLRuHceirDaY";
 			try {
-				//Verweundung von HttpUrlConnction
-//				HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
-//				con.setRequestMethod("GET");
-//				//add request header
-//				//con.setRequestProperty("User-Agent", USER_AGENT);
-//
-//				int responseCode = con.getResponseCode();
-//				con.get
-//
-//				System.out.println("\nSending 'GET' request to URL : " + url);
-//				System.out.println("Response Code : " + responseCode);
-//
-//				BufferedReader in = new BufferedReader(
-//				        new InputStreamReader(con.getInputStream()));
-//				String inputLine;
-//				StringBuffer response = new StringBuffer();
-//
-//				while ((inputLine = in.readLine()) != null) {
-//					response.append(inputLine);
-//				}
-//				in.close();
-//				con.disconnect();
-//
-//				//print result
-//				System.out.println(response.toString());
 				
 				//Verwedung von httpClient
 				HttpClient httpclient = new DefaultHttpClient();
 				HttpGet httpget = new HttpGet(url);
 				HttpResponse response = httpclient.execute(httpget);
+				httpclient = null;
 
 				JSONObject jsonObj = (JSONObject) new JSONParser().parse(EntityUtils.toString(response.getEntity()));
-				System.out.println(jsonObj.toString());
-				JSONArray jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("rows").toString()));
+				JSONArray jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("rows").toString().toString()));
 				jsonObj = (JSONObject) jsonArray.get(0);
-				System.out.println(jsonObj.toString());
 				jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("elements").toString()));
 				jsonObj = (JSONObject) jsonArray.get(0);
 				jsonObj = (JSONObject) new JSONParser().parse((jsonObj.get("duration_in_traffic").toString()));
@@ -217,9 +213,11 @@ public class ViewController implements Initializable {
 				
 				
 			} catch (IOException e) {
+				System.out.println("IO");
 				e.printStackTrace();
 				return 0;
 			} catch (org.json.simple.parser.ParseException e) {
+				System.out.println("Parser");
 				e.printStackTrace();
 				return 0;
 			}
@@ -240,14 +238,6 @@ public class ViewController implements Initializable {
 			return "driving";
 		}
 		
-	}
-	
-//	private long arrivaleTime(long time) {
-//		DateFormat dfm = new SimpleDateFormat("yyyyMMdd");
-//		dfm.setTimeZone(TimeZone.getTimeZone("UTC+01:00"));
-//		dfm.Ins
-//		return 0;
-//	}
-	
+	}	
 
 }
