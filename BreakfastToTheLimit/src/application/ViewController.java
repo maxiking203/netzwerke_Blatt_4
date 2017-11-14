@@ -116,7 +116,7 @@ public class ViewController implements Initializable {
 	}
 	
 	//Paul Pünktlich left for work
-	public synchronized void pPEnd() {
+	public void pPEnd() {
 		pLeft = true;
 		pPInfo.setText("Paula allready left");
 	}
@@ -155,9 +155,8 @@ public class ViewController implements Initializable {
 //		String iMode = getMode(iKindOf.getSelectionModel().getSelectedItem());
 //		
 		new Thread (new Runnable() {
-			public void run() {
+			public synchronized void run() {
 				while(!pLeft) {
-		
 					if(!pLeft) {
 						long pDuration = doRequest(pAdr, pMode);
 						//how much time till, have to leave in Seconds
@@ -165,11 +164,15 @@ public class ViewController implements Initializable {
 						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
 						System.out.println("A");
 					}
-			
+					try {
+						this.wait(5000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}	
-		}
-	).start();
+		}).start();
 	}
 	
 	private long getTimeToGo(long time, long duration) {
