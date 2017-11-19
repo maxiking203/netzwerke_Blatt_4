@@ -53,7 +53,8 @@ public class HueConnection {
 
 			}
 			httpclient = null;
-			putAllLightsWhite();
+			long[] a = new long[] {100,0,0};
+			checkAllLightColor(a);
 			return hueJSON;
 		} catch (IOException e) {
 			httpclient = null;
@@ -104,12 +105,17 @@ public class HueConnection {
 		}
 		try {
 			HttpResponse response = httpclient.execute(lightput);
+			if (response.getStatusLine().getStatusCode() == 200) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+			return false;
 		} catch (IOException e) {
-			e.printStackTrace();
+			return false;
 		}
-		return true;
 	}
 	
 	private void putAllLightsColor(int color) {
