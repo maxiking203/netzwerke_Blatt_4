@@ -30,6 +30,8 @@ public class HueConnection {
 	private String localIP = "localhost";
 	private String localUser = "newdeveloper";
 	public boolean local = false;
+	public int numberOfLights = 3;
+	private int standSat = 254;
 	
 	public JSONObject connect(String url) {
 		HttpClient httpclient = new DefaultHttpClient();
@@ -51,7 +53,7 @@ public class HueConnection {
 
 			}
 			httpclient = null;
-			getSec(100,0,0);
+			putAllLightsWhite();
 			return hueJSON;
 		} catch (IOException e) {
 			httpclient = null;
@@ -59,19 +61,41 @@ public class HueConnection {
 		}
 	}
 	
-	public void getSec(long p1, long p2, long p3) {
-		if (p1 <= 120) {
-			putLights(1, 0);
+	//orange = 5000
+	//red = 0
+	//white =
+	public void checkAllLightColor(long[] seconds) {
+		int orange = 5000;
+		int red = 0;
+		int lightNumber = 1;
+		String alert = "none";
+		for (long time : seconds) {
+			if (time < 0) {
+				putAllLightsRedAlert();
+				break;
+			}
+			else {
+				if (time <= 120 && time >= 60) {
+					putLights(lightNumber, orange, alert, standSat);
+				}
+				else if (time <= 60) {
+					putLights(lightNumber, red, alert, standSat);
+				}
+			}
+			lightNumber++;
 		}
 	}
 	
-	private boolean putLights(int id, int color) {
+	private boolean putLights(int id, int color, String alert, int saturation) {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPut lightput; 
 		lightput = new HttpPut("http://" + localIP + "/api/" + localUser + "/lights/" + id + "/state");
 		JSONObject light = new JSONObject();
 		light.put("hue", color);
 		light.put("on", true);
+		light.put("alert", alert);
+		light.put("bri", 254);
+		light.put("sat", saturation);
 		try {
 			StringEntity message = new StringEntity(light.toString());
 			lightput.setEntity(message);
@@ -88,7 +112,21 @@ public class HueConnection {
 		return true;
 	}
 	
-	private boolean putLightsAll() {
-		
+	private void putAllLightsColor(int color) {
+		for (int i = numberOfLights; i > 0; i--) {
+			putLights(i, color, "none", standSat);
+		}
+	}
+	
+	private void putAllLightsWhite() {
+		for (int i = numberOfLights; i > 0; i--) {
+			putLights(i, 0, "none", 0);
+		}
+	}
+	
+	private void putAllLightsRedAlert() {
+		for (int i = numberOfLights; i > 0; i--) {
+			putLights(i, 0, "select", standSat);
+		}
 	}
 }
