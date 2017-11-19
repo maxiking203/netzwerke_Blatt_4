@@ -96,6 +96,7 @@ public class ViewController implements Initializable {
 	private boolean pLeft = false;
 	private boolean lLeft = false;
 	private boolean iLeft = false;
+	private long times[] = {0, 0, 0};
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -137,13 +138,18 @@ public class ViewController implements Initializable {
 	
 	//Insert finished, start request with input
 	public void toSend() {
+		pLeft = false;
+		lLeft = false;
+		iLeft = false;
+		
 		String pAdr = pPStreet.getText().replace(" ", "") + "+" + pPNr.getText() + "+" + pPPlace.getText();
 		String tmpTime[] = pPTime.getText().split(":");
 		//in Seconds
 		long pTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
 		String pMode = getMode(pPKindOf.getSelectionModel().getSelectedItem());
-		long pLeftTime;
+		System.out.println(pMode);
 		
+		//Einagbe der 2 anderen Adressen zum testen auskommentiert
 //		String lAdr = lLStreet.getText().replace(" ", "") + "+" + lLNr.getText() + "+" + lLPlace.getText();
 //		tmpTime = lLTime.getText().split(":");
 //		long lTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
@@ -156,14 +162,42 @@ public class ViewController implements Initializable {
 //		
 		new Thread (new Runnable() {
 			public synchronized void run() {
-				while(!pLeft) {
+				//Zum testen 
+				lLeft = true;
+				iLeft = true;
+				//
+				while(!pLeft || !lLeft || !iLeft) {
 					if(!pLeft) {
 						long pDuration = doRequest(pAdr, pMode);
 						//how much time till, have to leave in Seconds
-						getTimeToGo(pTime, pDuration);
+						 times[0] = getTimeToGo(pTime, pDuration);
+						 //
 						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
-						System.out.println("A");
 					}
+					
+					//Einagbe der 2 anderen Adressen zum testen auskommentiert
+//					if(!lLeft) {
+//						long pDuration = doRequest(pAdr, pMode);
+//						//how much time till, have to leave in Seconds
+//						 times[1] = getTimeToGo(pTime, pDuration);
+//						 //
+//						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
+//					}
+//					if(!iLeft) {
+//						long pDuration = doRequest(pAdr, pMode);
+//						//how much time till, have to leave in Seconds
+//						 times[2] = getTimeToGo(pTime, pDuration);
+//						 //
+//						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
+//					}
+
+					
+					//
+					//
+					//Hier könntest du dir jetzt mit deiner Methode des long Array times holen
+					// index 0 Paula, index 1 Lothar, index 2 Ich
+					//
+					//
 					try {
 						this.wait(5000);
 					} catch (InterruptedException e) {
@@ -175,21 +209,23 @@ public class ViewController implements Initializable {
 		}).start();
 	}
 	
-	private long getTimeToGo(long time, long duration) {
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+	private synchronized long getTimeToGo(long time, long duration) {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		String sysTime[] = sdf.format(new Date()).toString().split(":");
-		long tmpTime = (Integer.parseInt(sysTime[0]) * 60 + Integer.parseInt(sysTime[1])) * 60;
-		return time - duration - tmpTime;
+		long tmpTime = (Integer.parseInt(sysTime[0]) * 60 + Integer.parseInt(sysTime[1])) * 60 + Integer.parseInt(sysTime[2]);
+		time = time - duration - tmpTime;
+		System.out.println(time);
+		return time;
 	}
 	
-	private String getLeaveTime(long time, long duration) {
+	private synchronized String getLeaveTime(long time, long duration) {
 		long tmp = time - duration;
 		long hours = (tmp / 60) / 60;
 		long min = (tmp - (hours * 60 * 60))/ 60;
 		return hours + ":" + min;
 	}
 	
-	private long doRequest(String adr, String mode) {
+	private synchronized long doRequest(String adr, String mode) {
 		adr.replace("ß", "ss");
 		adr.replace("ä", "ae");
 		adr.replace("ö", "oe");
@@ -198,6 +234,7 @@ public class ViewController implements Initializable {
 		adr.replace("Ö", "Oe");
 		adr.replace("Ü", "Ue");
 		String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + HOME + "&destinations=" + adr + "&mode=" + mode + "&departure_time=now&traffic_mode=best_guess&key=AIzaSyD5FrhCIemscBuwJYQwoO6wLRuHceirDaY";
+		System.out.println(url);
 			try {
 				
 				//Verwedung von httpClient
@@ -207,11 +244,17 @@ public class ViewController implements Initializable {
 				httpclient = null;
 
 				JSONObject jsonObj = (JSONObject) new JSONParser().parse(EntityUtils.toString(response.getEntity()));
+				System.out.println(jsonObj);
 				JSONArray jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("rows").toString().toString()));
 				jsonObj = (JSONObject) jsonArray.get(0);
 				jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("elements").toString()));
 				jsonObj = (JSONObject) jsonArray.get(0);
+				if (mode.equals("driving")) {
 				jsonObj = (JSONObject) new JSONParser().parse((jsonObj.get("duration_in_traffic").toString()));
+				}
+				else {
+				jsonObj = (JSONObject) new JSONParser().parse((jsonObj.get("duration").toString()));
+				}
 				return (long) jsonObj.get("value");
 				
 				
