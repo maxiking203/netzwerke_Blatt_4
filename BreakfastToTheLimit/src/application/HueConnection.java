@@ -29,11 +29,23 @@ public class HueConnection {
 	private String username = "2b2d3ff23d63751f10c1d8c0332d50ff";
 	private String localIP = "localhost";
 	private String localUser = "newdeveloper";
-	public boolean local = false;
+	public boolean labor = false;
 	public int numberOfLights = 3;
 	private int standSat = 254;
 	
-	public JSONObject connect(String url) {
+	public HueConnection(boolean labor) {
+		this.labor = labor;
+	}
+	
+	public HueConnection() {
+		
+	}
+	
+	public HueConnection(int lights) {
+		this.numberOfLights = lights;
+	}
+	
+	private JSONObject getAllInfo(String url) {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpGet httpget;
 		if (url == null) {
@@ -52,45 +64,46 @@ public class HueConnection {
 			} catch (ParseException e) {
 
 			}
-			httpclient = null;
-			long[] a = new long[] {100,0,0};
-			checkAllLightColor(a);
 			return hueJSON;
 		} catch (IOException e) {
-			httpclient = null;
 			return hueJSON;
 		}
 	}
 	
-	//orange = 5000
-	//red = 0
-	//white =
 	public void checkAllLightColor(long[] seconds) {
 		int orange = 5000;
 		int red = 0;
 		int lightNumber = 1;
-		String alert = "none";
+		String noalert = "none";
 		for (long time : seconds) {
 			if (time < 0) {
 				putAllLightsRedAlert();
 				break;
 			}
 			else {
-				if (time <= 120 && time >= 60) {
-					putLights(lightNumber, orange, alert, standSat);
+				if (time <= 120 && time > 60) {
+					putLights(lightNumber, orange, noalert, standSat);
 				}
-				else if (time <= 60) {
-					putLights(lightNumber, red, alert, standSat);
+				else if (time <= 60 && time > 0) {
+					putLights(lightNumber, red, noalert, standSat);
+				}
+				else {
+					putLights(lightNumber, red, noalert, 0);
 				}
 			}
 			lightNumber++;
 		}
 	}
 	
-	private boolean putLights(int id, int color, String alert, int saturation) {
+	private void putLights(int id, int color, String alert, int saturation) {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPut lightput; 
-		lightput = new HttpPut("http://" + localIP + "/api/" + localUser + "/lights/" + id + "/state");
+		if (!labor) {
+			lightput = new HttpPut("http://" + localIP + "/api/" + localUser + "/lights/" + id + "/state");
+		}
+		else {
+			lightput = new HttpPut("http://" + lastIP + "/api/" + username + "/lights/" + id + "/state");
+		}
 		JSONObject light = new JSONObject();
 		light.put("hue", color);
 		light.put("on", true);
@@ -106,15 +119,15 @@ public class HueConnection {
 		try {
 			HttpResponse response = httpclient.execute(lightput);
 			if (response.getStatusLine().getStatusCode() == 200) {
-				return true;
+				System.out.println("Light values changed");
 			}
 			else {
-				return false;
+				System.err.println("Error setting light value");
 			}
 		} catch (ClientProtocolException e) {
-			return false;
+			System.err.println("Error setting light value");
 		} catch (IOException e) {
-			return false;
+			System.err.println("Error setting light value");
 		}
 	}
 	
@@ -124,7 +137,7 @@ public class HueConnection {
 		}
 	}
 	
-	private void putAllLightsWhite() {
+	public void putAllLightsWhite() {
 		for (int i = numberOfLights; i > 0; i--) {
 			putLights(i, 0, "none", 0);
 		}
