@@ -89,7 +89,7 @@ public class ViewController implements Initializable {
 	Button iDone;
 
 	@FXML
-	Button connect;
+	Button reset;
 	@FXML
 	Button insert;
 	
@@ -97,6 +97,7 @@ public class ViewController implements Initializable {
 	private boolean lLeft = false;
 	private boolean iLeft = false;
 	private long times[] = {0, 0, 0};
+	private HueConnection lightController = new HueConnection();
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -119,7 +120,7 @@ public class ViewController implements Initializable {
 	//Paul Pünktlich left for work
 	public void pPEnd() {
 		pLeft = true;
-		pPInfo.setText("Paula allready left");
+		pPInfo.setText("Paula already left");
 	}
 	
 	//Lothar Late left for work
@@ -132,7 +133,7 @@ public class ViewController implements Initializable {
 		iLeft = true;
 	}
 	
-	public void toConnect() {
+	public void resetAll() {
 		
 	}
 	
@@ -196,6 +197,7 @@ public class ViewController implements Initializable {
 					//
 					//Hier könntest du dir jetzt mit deiner Methode des long Array times holen
 					// index 0 Paula, index 1 Lothar, index 2 Ich
+					lightController.checkAllLightColor(times);
 					//
 					//
 					try {

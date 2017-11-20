@@ -49,11 +49,11 @@
                   <Button fx:id="insert" layoutX="50.0" layoutY="500.0" mnemonicParsing="false" onAction="#toSend" prefHeight="30.0" prefWidth="460.0" text="Eingabe beenden" />
                </children>
             </AnchorPane>
-            <Button fx:id="pPDone" layoutX="550.0" layoutY="100.0" mnemonicParsing="false" onAction="#pPEnd" prefHeight="30.0" prefWidth="150.0" text="Paula Abfahrt!" />
-            <Button fx:id="iDone" layoutX="550.0" layoutY="400.0" mnemonicParsing="false" onAction="#iEnd" prefHeight="30.0" prefWidth="150.0" text="Ich Abfahrt!" />
-            <Button fx:id="lLDone" layoutX="550.0" layoutY="250.0" mnemonicParsing="false" onAction="#lLEnd" prefHeight="30.0" prefWidth="150.0" text="Lothar Abfahrt!" />
+            <Button fx:id="pPDone" layoutX="550.0" layoutY="125.0" mnemonicParsing="false" onAction="#pPEnd" prefHeight="30.0" prefWidth="150.0" text="Paula Abfahrt!" />
+            <Button fx:id="iDone" layoutX="550.0" layoutY="425.0" mnemonicParsing="false" onAction="#iEnd" prefHeight="30.0" prefWidth="150.0" text="Ich Abfahrt!" />
+            <Button fx:id="lLDone" layoutX="550.0" layoutY="275.0" mnemonicParsing="false" onAction="#lLEnd" prefHeight="30.0" prefWidth="150.0" text="Lothar Abfahrt!" />
             <TextArea fx:id="pPInfo" layoutX="550.0" layoutY="27.0" prefHeight="60.0" prefWidth="180.0" />
-            <Button fx:id="connect" layoutX="550.0" layoutY="506.0" mnemonicParsing="false" onAction="#toConnect" prefHeight="31.0" prefWidth="150.0" text="Connect!" />
+            <Button fx:id="rest" layoutX="550.0" layoutY="506.0" mnemonicParsing="false" onAction="#resetAll" prefHeight="31.0" prefWidth="150.0" text="Rest!" />
          </children>
       </Pane>
    </center>
