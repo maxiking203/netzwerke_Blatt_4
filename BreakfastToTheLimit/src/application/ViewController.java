@@ -113,7 +113,10 @@ public class ViewController implements Initializable {
 		iKindOf.setItems(FXCollections.observableArrayList("Auto", "zu Fuﬂ", "Rad", "÷PNV"));
 		iKindOf.getSelectionModel().selectFirst();;
 		
-		pPInfo.setEditable(false);;
+		pPInfo.setEditable(false);
+		pPDone.setDisable(true);
+		lLDone.setDisable(true);
+		iDone.setDisable(true);
 		
 	}
 	
@@ -134,7 +137,40 @@ public class ViewController implements Initializable {
 	}
 	
 	public void resetAll() {
+		pLeft = true;
+		lLeft = true;
+		iLeft = true;
+		for(int i = 0; i < times.length; i++) {
+			times[i] = 0;
+		}
+		lightController.checkAllLightColor(times);
+		pPStreet.setText("");
+		pPNr.setText(""); 
+		pPPlace.setText("");
+		pPTime.setText("");
+		pPStreet.setDisable(false);
+		pPNr.setDisable(false); 
+		pPPlace.setDisable(false);
+		pPTime.setDisable(false);
+		insert.setDisable(false);
 		
+//		lLStreet.setText("");
+//		lLNr.setText(""); 
+//		lLPlace.setText("");
+//		lLTime.setText("");
+//		lLStreet.setDisable(true);
+//		lLNr.setDisable(true); 
+//		lLPlace.setDisable(true);
+//		lLTime.setDisable(true);
+//		
+//		iStreet.setText("");
+//		iNr.setText(""); 
+//		iPlace.setText("");
+//		iTime.setText("");
+//		iStreet.setDisable(true);
+//		iNr.setDisable(true); 
+//		iPlace.setDisable(true);
+//		iTime.setDisable(true);
 	}
 	
 	//Insert finished, start request with input
@@ -142,6 +178,11 @@ public class ViewController implements Initializable {
 		pLeft = false;
 		lLeft = false;
 		iLeft = false;
+		pPDone.setDisable(false);
+		lLDone.setDisable(false);
+		iDone.setDisable(false);
+		insert.setDisable(true);
+
 		
 		String pAdr = pPStreet.getText().replace(" ", "") + "+" + pPNr.getText() + "+" + pPPlace.getText();
 		String tmpTime[] = pPTime.getText().split(":");
@@ -207,6 +248,7 @@ public class ViewController implements Initializable {
 						e.printStackTrace();
 					}
 				}
+				notifyAll();
 			}	
 		}).start();
 	}
