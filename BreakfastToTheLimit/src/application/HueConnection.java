@@ -35,34 +35,34 @@ public class HueConnection {
 	
 	public HueConnection(boolean labor) {
 		this.labor = labor;
+		putAllLightsWhite();
+		getAllInfo();
 	}
 	
 	public HueConnection() {
-		
+		putAllLightsWhite();
+		getAllInfo();
 	}
 	
-	public HueConnection(int lights) {
-		this.numberOfLights = lights;
-	}
-	
-	private JSONObject getAllInfo(String url) {
+	private JSONObject getAllInfo() {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpGet httpget;
-		if (url == null) {
-			httpget = new HttpGet("http://" + localIP + "/api/" + localUser);
+		if (!labor) {
+			httpget = new HttpGet("http://" + localIP + "/api/" + localUser + "/lights");
 		}
 		else {
-			httpget = new HttpGet(url);
+			httpget = new HttpGet("http://" + lastIP + "/api/" + username + "/lights");
 		}
 		JSONObject hueJSON = null;
 		try {
 			HttpResponse response = httpclient.execute(httpget);
 			try {
 				hueJSON = (JSONObject) new JSONParser().parse(EntityUtils.toString(response.getEntity()));
+				System.out.println(hueJSON.toString());
 			} catch (org.apache.http.ParseException e) {
-
+				System.err.println("Error parsing JSON");
 			} catch (ParseException e) {
-
+				System.err.println("Error parsing JSON");
 			}
 			return hueJSON;
 		} catch (IOException e) {
@@ -74,6 +74,7 @@ public class HueConnection {
 		int orange = 5000;
 		int red = 0;
 		int lightNumber = 1;
+		
 		String noalert = "none";
 		for (long time : seconds) {
 			if (time < 0) {
@@ -137,7 +138,7 @@ public class HueConnection {
 		}
 	}
 	
-	public void putAllLightsWhite() {
+	private void putAllLightsWhite() {
 		for (int i = numberOfLights; i > 0; i--) {
 			putLights(i, 0, "none", 0);
 		}
