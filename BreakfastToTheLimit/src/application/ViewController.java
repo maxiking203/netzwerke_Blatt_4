@@ -73,6 +73,8 @@ public class ViewController implements Initializable {
 	ChoiceBox<String> lLKindOf;
 	@FXML
 	Button lLDone;
+	@FXML
+	TextArea lLInfo;
     
 	//Eingabe und Button Ich
 	@FXML
@@ -87,6 +89,8 @@ public class ViewController implements Initializable {
 	ChoiceBox<String> iKindOf; 
 	@FXML
 	Button iDone;
+	@FXML
+	TextArea iInfo;
 
 	@FXML
 	Button reset;
@@ -97,7 +101,7 @@ public class ViewController implements Initializable {
 	private boolean lLeft = false;
 	private boolean iLeft = false;
 	private long times[] = {0, 0, 0};
-	private HueConnection lightController = new HueConnection(true);
+	private HueConnection lightController = new HueConnection(false);
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -115,8 +119,11 @@ public class ViewController implements Initializable {
 		
 		pPInfo.setEditable(false);
 		pPDone.setDisable(true);
+		lLInfo.setEditable(false);
 		lLDone.setDisable(true);
+		iInfo.setEditable(true);
 		iDone.setDisable(true);
+
 		
 	}
 	
@@ -124,18 +131,24 @@ public class ViewController implements Initializable {
 	public void pPEnd() {
 		pLeft = true;
 		pPInfo.setText("Paula already left");
-		times[0] = 0;
+		times[0] = (Long) null;
 		lightController.checkAllLightColor(times);
 	}
 	
 	//Lothar Late left for work
 	public void lLEnd() {
 		lLeft = true;
+		lLInfo.setText("Lothar already left");
+		times[1] = (Long) null;
+		lightController.checkAllLightColor(times);
 	}
 	
 	//I left for work
 	public void iEnd() {
 		iLeft = true;
+		iInfo.setText("I already left");
+		times[2] = (Long) null;
+		lightController.checkAllLightColor(times);
 	}
 	
 	public void resetAll() {
@@ -194,21 +207,18 @@ public class ViewController implements Initializable {
 		System.out.println(pMode);
 		
 		//Einagbe der 2 anderen Adressen zum testen auskommentiert
-//		String lAdr = lLStreet.getText().replace(" ", "") + "+" + lLNr.getText() + "+" + lLPlace.getText();
-//		tmpTime = lLTime.getText().split(":");
-//		long lTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
-//		String lMode = getMode(lLKindOf.getSelectionModel().getSelectedItem());
+		String lAdr = lLStreet.getText().replace(" ", "") + "+" + lLNr.getText() + "+" + lLPlace.getText();
+		tmpTime = lLTime.getText().split(":");
+		long lTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+		String lMode = getMode(lLKindOf.getSelectionModel().getSelectedItem());
 		
-//		String iAdr  = iStreet.getText().replace(" ", "") + "+" + iNr.getText() + "+" + iPlace.getText();
-//		tmpTime = iTime.getText().split(":");
-//		long iTimeS = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
-//		String iMode = getMode(iKindOf.getSelectionModel().getSelectedItem());
-//		
+		String iAdr  = iStreet.getText().replace(" ", "") + "+" + iNr.getText() + "+" + iPlace.getText();
+		tmpTime = iTime.getText().split(":");
+		long iTimeS = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+		String iMode = getMode(iKindOf.getSelectionModel().getSelectedItem());
+		
 		new Thread (new Runnable() {
 			public synchronized void run() {
-				//Zum testen 
-				lLeft = true;
-				iLeft = true;
 				//
 				while(!pLeft || !lLeft || !iLeft) {
 					if(!pLeft) {
@@ -220,20 +230,20 @@ public class ViewController implements Initializable {
 					}
 					
 					//Einagbe der 2 anderen Adressen zum testen auskommentiert
-//					if(!lLeft) {
-//						long pDuration = doRequest(pAdr, pMode);
-//						//how much time till, have to leave in Seconds
-//						 times[1] = getTimeToGo(pTime, pDuration);
-//						 //
-//						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
-//					}
-//					if(!iLeft) {
-//						long pDuration = doRequest(pAdr, pMode);
-//						//how much time till, have to leave in Seconds
-//						 times[2] = getTimeToGo(pTime, pDuration);
-//						 //
-//						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
-//					}
+					if(!lLeft) {
+						long pDuration = doRequest(pAdr, pMode);
+						//how much time till, have to leave in Seconds
+						 times[1] = getTimeToGo(pTime, pDuration);
+						 //
+						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
+					}
+					if(!iLeft) {
+						long pDuration = doRequest(pAdr, pMode);
+						//how much time till, have to leave in Seconds
+						 times[2] = getTimeToGo(pTime, pDuration);
+						 //
+						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
+					}
 
 					
 					//

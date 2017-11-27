@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ViewController">
-   <center>
+   <top>
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="624.0" prefWidth="503.0">
@@ -52,9 +52,11 @@
             <Button fx:id="pPDone" layoutX="550.0" layoutY="125.0" mnemonicParsing="false" onAction="#pPEnd" prefHeight="30.0" prefWidth="150.0" text="Paula Abfahrt!" />
             <Button fx:id="iDone" layoutX="550.0" layoutY="425.0" mnemonicParsing="false" onAction="#iEnd" prefHeight="30.0" prefWidth="150.0" text="Ich Abfahrt!" />
             <Button fx:id="lLDone" layoutX="550.0" layoutY="275.0" mnemonicParsing="false" onAction="#lLEnd" prefHeight="30.0" prefWidth="150.0" text="Lothar Abfahrt!" />
-            <TextArea fx:id="pPInfo" layoutX="550.0" layoutY="27.0" prefHeight="60.0" prefWidth="180.0" />
             <Button fx:id="rest" layoutX="550.0" layoutY="506.0" mnemonicParsing="false" onAction="#resetAll" prefHeight="31.0" prefWidth="150.0" text="Rest!" />
+            <TextArea fx:id="pPInfo" layoutX="550.0" layoutY="50.0" prefHeight="60.0" prefWidth="180.0" />
+            <TextArea fx:id="lLInfo" layoutX="550.0" layoutY="195.0" prefHeight="60.0" prefWidth="180.0" />
+            <TextArea fx:id="iInfo" layoutX="550.0" layoutY="350.0" prefHeight="60.0" prefWidth="180.0" />
          </children>
       </Pane>
-   </center>
+   </top>
 </BorderPane>
