@@ -97,7 +97,7 @@ public class ViewController implements Initializable {
 	private boolean lLeft = false;
 	private boolean iLeft = false;
 	private long times[] = {0, 0, 0};
-	private HueConnection lightController = new HueConnection();
+	private HueConnection lightController = new HueConnection(true);
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -124,6 +124,8 @@ public class ViewController implements Initializable {
 	public void pPEnd() {
 		pLeft = true;
 		pPInfo.setText("Paula already left");
+		times[0] = 0;
+		lightController.checkAllLightColor(times);
 	}
 	
 	//Lothar Late left for work

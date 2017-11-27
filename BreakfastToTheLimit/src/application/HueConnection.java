@@ -71,7 +71,7 @@ public class HueConnection {
 	}
 	
 	public void checkAllLightColor(long[] seconds) {
-		int orange = 5000;
+		int orange = 3500;
 		int red = 0;
 		int lightNumber = 1;
 		
@@ -146,7 +146,7 @@ public class HueConnection {
 	
 	private void putAllLightsRedAlert() {
 		for (int i = numberOfLights; i > 0; i--) {
-			putLights(i, 0, "select", standSat);
+			putLights(i, 0, "lselect", standSat);
 		}
 	}
 }
