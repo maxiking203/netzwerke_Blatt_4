@@ -167,25 +167,28 @@ public class ViewController implements Initializable {
 		pPNr.setDisable(false); 
 		pPPlace.setDisable(false);
 		pPTime.setDisable(false);
+		pPInfo.setText("");
 		insert.setDisable(false);
 		
-//		lLStreet.setText("");
-//		lLNr.setText(""); 
-//		lLPlace.setText("");
-//		lLTime.setText("");
-//		lLStreet.setDisable(true);
-//		lLNr.setDisable(true); 
-//		lLPlace.setDisable(true);
-//		lLTime.setDisable(true);
-//		
-//		iStreet.setText("");
-//		iNr.setText(""); 
-//		iPlace.setText("");
-//		iTime.setText("");
-//		iStreet.setDisable(true);
-//		iNr.setDisable(true); 
-//		iPlace.setDisable(true);
-//		iTime.setDisable(true);
+		lLStreet.setText("");
+		lLNr.setText(""); 
+		lLPlace.setText("");
+		lLTime.setText("");
+		lLStreet.setDisable(true);
+		lLNr.setDisable(true); 
+		lLPlace.setDisable(true);
+		lLTime.setDisable(true);
+		lLInfo.setText("");
+		
+		iStreet.setText("");
+		iNr.setText(""); 
+		iPlace.setText("");
+		iTime.setText("");
+		iStreet.setDisable(true);
+		iNr.setDisable(true); 
+		iPlace.setDisable(true);
+		iTime.setDisable(true);
+		iInfo.setText("");
 	}
 	
 	//Insert finished, start request with input
@@ -231,18 +234,18 @@ public class ViewController implements Initializable {
 					
 					//Einagbe der 2 anderen Adressen zum testen auskommentiert
 					if(!lLeft) {
-						long pDuration = doRequest(pAdr, pMode);
+						long lDuration = doRequest(lAdr, lMode);
 						//how much time till, have to leave in Seconds
-						 times[1] = getTimeToGo(pTime, pDuration);
+						 times[1] = getTimeToGo(lTime, lDuration);
 						 //
-						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
+						lLInfo.setText("Abfahrt: " + getLeaveTime(lTime, lDuration) + "\n" + "Dauer(min): " + (lDuration / 60 + 1));
 					}
 					if(!iLeft) {
-						long pDuration = doRequest(pAdr, pMode);
+						long iDuration = doRequest(iAdr, iMode);
 						//how much time till, have to leave in Seconds
-						 times[2] = getTimeToGo(pTime, pDuration);
+						 times[2] = getTimeToGo(iTime, iDuration);
 						 //
-						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
+						iInfo.setText("Abfahrt: " + getLeaveTime(iTime, iDuration) + "\n" + "Dauer(min): " + (iDuration / 60 + 1));
 					}
 
 					
