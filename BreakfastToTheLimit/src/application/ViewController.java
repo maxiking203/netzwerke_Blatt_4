@@ -174,98 +174,115 @@ public class ViewController implements Initializable {
 		lLNr.setText(""); 
 		lLPlace.setText("");
 		lLTime.setText("");
-		lLStreet.setDisable(true);
-		lLNr.setDisable(true); 
-		lLPlace.setDisable(true);
-		lLTime.setDisable(true);
+		lLStreet.setDisable(false);
+		lLNr.setDisable(false); 
+		lLPlace.setDisable(false);
+		lLTime.setDisable(false);
 		lLInfo.setText("");
 		
 		iStreet.setText("");
 		iNr.setText(""); 
 		iPlace.setText("");
 		iTime.setText("");
-		iStreet.setDisable(true);
-		iNr.setDisable(true); 
-		iPlace.setDisable(true);
-		iTime.setDisable(true);
+		iStreet.setDisable(false);
+		iNr.setDisable(false); 
+		iPlace.setDisable(false);
+		iTime.setDisable(false);
 		iInfo.setText("");
 	}
 	
 	//Insert finished, start request with input
 	public void toSend() {
-		pLeft = false;
-		lLeft = false;
-		iLeft = false;
-		pPDone.setDisable(false);
-		lLDone.setDisable(false);
-		iDone.setDisable(false);
-		insert.setDisable(true);
-
-		
-		String pAdr = pPStreet.getText().replace(" ", "") + "+" + pPNr.getText() + "+" + pPPlace.getText();
-		String tmpTime[] = pPTime.getText().split(":");
-		//in Seconds
-		long pTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
-		String pMode = getMode(pPKindOf.getSelectionModel().getSelectedItem());
-		System.out.println(pMode);
-		
-		//Einagbe der 2 anderen Adressen zum testen auskommentiert
-		String lAdr = lLStreet.getText().replace(" ", "") + "+" + lLNr.getText() + "+" + lLPlace.getText();
-		tmpTime = lLTime.getText().split(":");
-		long lTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
-		String lMode = getMode(lLKindOf.getSelectionModel().getSelectedItem());
-		
-		String iAdr  = iStreet.getText().replace(" ", "") + "+" + iNr.getText() + "+" + iPlace.getText();
-		tmpTime = iTime.getText().split(":");
-		long iTimeS = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
-		String iMode = getMode(iKindOf.getSelectionModel().getSelectedItem());
-		
-		new Thread (new Runnable() {
-			public synchronized void run() {
-				//
-				while(!pLeft || !lLeft || !iLeft) {
-					if(!pLeft) {
-						long pDuration = doRequest(pAdr, pMode);
-						//how much time till, have to leave in Seconds
-						 times[0] = getTimeToGo(pTime, pDuration);
-						 //
-						pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
-					}
-					
-					//Einagbe der 2 anderen Adressen zum testen auskommentiert
-					if(!lLeft) {
-						long lDuration = doRequest(lAdr, lMode);
-						//how much time till, have to leave in Seconds
-						 times[1] = getTimeToGo(lTime, lDuration);
-						 //
-						lLInfo.setText("Abfahrt: " + getLeaveTime(lTime, lDuration) + "\n" + "Dauer(min): " + (lDuration / 60 + 1));
-					}
-					if(!iLeft) {
-						long iDuration = doRequest(iAdr, iMode);
-						//how much time till, have to leave in Seconds
-						 times[2] = getTimeToGo(iTime, iDuration);
-						 //
-						iInfo.setText("Abfahrt: " + getLeaveTime(iTime, iDuration) + "\n" + "Dauer(min): " + (iDuration / 60 + 1));
-					}
-
-					
+		if(pPStreet.getText().isEmpty() || pPNr.getText().isEmpty() || pPPlace.getText().isEmpty() || pPTime.getText().isEmpty() ||
+				lLStreet.getText().isEmpty() || lLNr.getText().isEmpty() || lLPlace.getText().isEmpty() || lLTime.getText().isEmpty() ||
+				iStreet.getText().isEmpty() || iNr.getText().isEmpty() || iPlace.getText().isEmpty() || iTime.getText().isEmpty()) {
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Missing Informations");
+			alert.setContentText("Your Request cound't start please insert all values!");
+			alert.showAndWait();
+		}
+		else {
+			pLeft = false;
+			lLeft = false;
+			iLeft = false;
+			pPDone.setDisable(false);
+			lLDone.setDisable(false);
+			iDone.setDisable(false);
+			insert.setDisable(true);
+	
+			
+			String pAdr = pPStreet.getText().replace(" ", "") + "+" + pPNr.getText() + "+" + pPPlace.getText();
+			String tmpTime[] = pPTime.getText().split(":");
+			//in Seconds
+			long pTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+			String pMode = getMode(pPKindOf.getSelectionModel().getSelectedItem());
+			System.out.println(pMode);
+			
+			//Einagbe der 2 anderen Adressen zum testen auskommentiert
+			String lAdr = lLStreet.getText().replace(" ", "") + "+" + lLNr.getText() + "+" + lLPlace.getText();
+			tmpTime = lLTime.getText().split(":");
+			long lTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+			String lMode = getMode(lLKindOf.getSelectionModel().getSelectedItem());
+			
+			String iAdr  = iStreet.getText().replace(" ", "") + "+" + iNr.getText() + "+" + iPlace.getText();
+			tmpTime = iTime.getText().split(":");
+			long iTimeS = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+			String iMode = getMode(iKindOf.getSelectionModel().getSelectedItem());
+			
+			new Thread (new Runnable() {
+				public synchronized void run() {
 					//
-					//
-					//Hier könntest du dir jetzt mit deiner Methode des long Array times holen
-					// index 0 Paula, index 1 Lothar, index 2 Ich
-					lightController.checkAllLightColor(times);
-					//
-					//
-					try {
-						this.wait(5000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					while(!pLeft || !lLeft || !iLeft) {
+						if(!pLeft) {
+							long pDuration = doRequest(pAdr, pMode);
+							//how much time till, have to leave in Seconds
+							 times[0] = getTimeToGo(pTime, pDuration);
+							 //
+							pPInfo.setText("Abfahrt: " + getLeaveTime(pTime, pDuration) + "\n" + "Dauer(min): " + (pDuration / 60 + 1));
+						}
+						
+						//Einagbe der 2 anderen Adressen zum testen auskommentiert
+						if(!lLeft) {
+							long lDuration = doRequest(lAdr, lMode);
+							//how much time till, have to leave in Seconds
+							 times[1] = getTimeToGo(lTime, lDuration);
+							 //
+							lLInfo.setText("Abfahrt: " + getLeaveTime(lTime, lDuration) + "\n" + "Dauer(min): " + (lDuration / 60 + 1));
+						}
+						if(!iLeft) {
+							long iDuration = doRequest(iAdr, iMode);
+							//how much time till, have to leave in Seconds
+							 times[2] = getTimeToGo(iTimeS, iDuration);
+							 //
+							iInfo.setText("Abfahrt: " + getLeaveTime(iTimeS, iDuration) + "\n" + "Dauer(min): " + (iDuration / 60 + 1));
+						}
+	
+						
+						//
+						//
+						//Hier könntest du dir jetzt mit deiner Methode des long Array times holen
+						// index 0 Paula, index 1 Lothar, index 2 Ich
+						lightController.checkAllLightColor(times);
+						//
+						//
+						try {
+							this.wait(5000);
+						} catch (InterruptedException e) {
+							Alert alert = new Alert(AlertType.INFORMATION);
+							alert.setTitle("Error");
+							alert.setHeaderText("Internal Failure");
+							alert.setContentText("An internal error has occourred. Please try agian.");
+							alert.showAndWait();
+							e.printStackTrace();
+							resetAll();
+							e.printStackTrace();
+						}
 					}
-				}
-				notifyAll();
-			}	
-		}).start();
+					notifyAll();
+				}	
+			}).start();
+		}
 	}
 	
 	private synchronized long getTimeToGo(long time, long duration) {
@@ -318,12 +335,22 @@ public class ViewController implements Initializable {
 				
 				
 			} catch (IOException e) {
-				System.out.println("IO");
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Warning");
+				alert.setHeaderText("Bad Request");
+				alert.setContentText("With the given Information there was no Request possible. Please Check your inserts!");
+				alert.showAndWait();
 				e.printStackTrace();
+				resetAll();
 				return 0;
 			} catch (org.json.simple.parser.ParseException e) {
-				System.out.println("Parser");
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Error");
+				alert.setHeaderText("Internal Failure");
+				alert.setContentText("An internal error has occourred. Please try agian.");
+				alert.showAndWait();
 				e.printStackTrace();
+				resetAll();
 				return 0;
 			}
 	}

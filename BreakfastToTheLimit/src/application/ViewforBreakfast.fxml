@@ -52,7 +52,7 @@
             <Button fx:id="pPDone" layoutX="550.0" layoutY="125.0" mnemonicParsing="false" onAction="#pPEnd" prefHeight="30.0" prefWidth="150.0" text="Paula Abfahrt!" />
             <Button fx:id="iDone" layoutX="550.0" layoutY="425.0" mnemonicParsing="false" onAction="#iEnd" prefHeight="30.0" prefWidth="150.0" text="Ich Abfahrt!" />
             <Button fx:id="lLDone" layoutX="550.0" layoutY="275.0" mnemonicParsing="false" onAction="#lLEnd" prefHeight="30.0" prefWidth="150.0" text="Lothar Abfahrt!" />
-            <Button fx:id="rest" layoutX="550.0" layoutY="506.0" mnemonicParsing="false" onAction="#resetAll" prefHeight="31.0" prefWidth="150.0" text="Rest!" />
+            <Button fx:id="rest" layoutX="550.0" layoutY="506.0" mnemonicParsing="false" onAction="#resetAll" prefHeight="31.0" prefWidth="150.0" text="Reset!" />
             <TextArea fx:id="pPInfo" layoutX="550.0" layoutY="50.0" prefHeight="60.0" prefWidth="180.0" />
             <TextArea fx:id="lLInfo" layoutX="550.0" layoutY="195.0" prefHeight="60.0" prefWidth="180.0" />
             <TextArea fx:id="iInfo" layoutX="550.0" layoutY="350.0" prefHeight="60.0" prefWidth="180.0" />
