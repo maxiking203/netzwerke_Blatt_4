@@ -100,7 +100,7 @@ public class ViewController implements Initializable {
 	private boolean pLeft = false;
 	private boolean lLeft = false;
 	private boolean iLeft = false;
-	private long times[] = {0, 0, 0};
+	private long times[] = {Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE};
 	private HueConnection lightController;
 	
 	@Override
@@ -368,20 +368,28 @@ public class ViewController implements Initializable {
 				
 				
 			} catch (IOException e) {
-				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setTitle("Warning");
-				alert.setHeaderText("Bad Request");
-				alert.setContentText("With the given Information there was no Request possible. Please Check your inserts!");
-				alert.showAndWait();
-				e.printStackTrace();
-				resetAll();
+				Alert alertS = new Alert(AlertType.INFORMATION);
+				alertS.setTitle("Error");
+				alertS.setHeaderText("Internal Failure");
+				alertS.setContentText("An internal error has occourred. Please try agian.");
+				alertS.showAndWait();
+				resetAll();;
 				return Long.MAX_VALUE;
 			} catch (org.json.simple.parser.ParseException e) {
-				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setTitle("Error");
-				alert.setHeaderText("Internal Failure");
-				alert.setContentText("An internal error has occourred. Please try agian.");
-				alert.showAndWait();
+				Alert alertF = new Alert(AlertType.INFORMATION);
+				alertF.setTitle("Error");
+				alertF.setHeaderText("Internal Failure");
+				alertF.setContentText("An internal error has occourred. Please try agian.");
+				alertF.showAndWait();
+				resetAll();
+				return Long.MAX_VALUE;
+			} catch (NullPointerException n) {
+//				Alert badRequest = new Alert(AlertType.INFORMATION);
+//				badRequest.setTitle("Warning");
+//				badRequest.setHeaderText("Bad Request");
+//				badRequest.setContentText("With the given Information there was no Request possible. Please Check your inserts!");
+//				badRequest.showAndWait();
+				System.out.println("NULLPOINTER JSON");
 				resetAll();
 				return Long.MAX_VALUE;
 			}
