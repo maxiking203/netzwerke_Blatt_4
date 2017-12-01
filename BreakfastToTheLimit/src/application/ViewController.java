@@ -97,6 +97,12 @@ public class ViewController implements Initializable {
 	@FXML
 	Button insert;
 	
+	private boolean running = false;
+	
+	private long pTime = Long.MAX_VALUE;
+	private long lTime = Long.MAX_VALUE;
+	private long iTimeS = Long.MAX_VALUE;
+	
 	private boolean pLeft = false;
 	private boolean lLeft = false;
 	private boolean iLeft = false;
@@ -181,11 +187,13 @@ public class ViewController implements Initializable {
 		for(int i = 0; i < times.length; i++) {
 			times[i] = Long.MAX_VALUE;
 		}
-		try {
-		lightController.checkAllLightColor(times);
-		}
-		catch(IOException e) {
-			lightError();
+		if(running) {
+			try {
+			lightController.checkAllLightColor(times);
+			}
+			catch(IOException e) {
+				lightError();
+			}
 		}
 		pPStreet.setText("");
 		pPNr.setText(""); 
@@ -217,6 +225,7 @@ public class ViewController implements Initializable {
 		iPlace.setDisable(false);
 		iTime.setDisable(false);
 		iInfo.setText("");
+		running = false;
 	}
 	
 	//Insert finished, start request with input
@@ -237,33 +246,88 @@ public class ViewController implements Initializable {
 			pPDone.setDisable(false);
 			lLDone.setDisable(false);
 			iDone.setDisable(false);
-			insert.setDisable(true);
-	
+
+			
 			
 			String pAdr = pPStreet.getText().replace(" ", "") + "+" + pPNr.getText() + "+" + pPPlace.getText();
 			String tmpTime[] = pPTime.getText().split(":");
 			//in Seconds
-			long pTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+			try {
+			pTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+			}
+			catch (NumberFormatException n) {
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Warning");
+				alert.setHeaderText("Insert Time");
+				alert.setContentText("Please insert the time in the pettern hh:mm!");
+				alert.showAndWait();
+				return;
+			}
 			String pMode = getMode(pPKindOf.getSelectionModel().getSelectedItem());
 			System.out.println(pMode);
 			
 			//Einagbe der 2 anderen Adressen zum testen auskommentiert
 			String lAdr = lLStreet.getText().replace(" ", "") + "+" + lLNr.getText() + "+" + lLPlace.getText();
 			tmpTime = lLTime.getText().split(":");
-			long lTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+			try {
+			lTime = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+			}
+			catch (NumberFormatException n) {
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Warning");
+				alert.setHeaderText("Insert Time");
+				alert.setContentText("Please insert the time in the pettern hh:mm!");
+				alert.showAndWait();
+				return;
+			}
 			String lMode = getMode(lLKindOf.getSelectionModel().getSelectedItem());
 			
 			String iAdr  = iStreet.getText().replace(" ", "") + "+" + iNr.getText() + "+" + iPlace.getText();
 			tmpTime = iTime.getText().split(":");
-			long iTimeS = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+			try {
+			iTimeS = (Integer.parseInt(tmpTime[0]) * 60 + Integer.parseInt(tmpTime[1])) * 60;
+			}
+			catch (NumberFormatException n) {
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Warning");
+				alert.setHeaderText("Insert Time");
+				alert.setContentText("Please insert the time in the pettern hh:mm!");
+				alert.showAndWait();
+				return;
+			}
 			String iMode = getMode(iKindOf.getSelectionModel().getSelectedItem());
-			
+			insert.setDisable(true);
+
 			new Thread (new Runnable() {
+				@Override
 				public synchronized void run() {
+					long pDuration = Long.MAX_VALUE;
+					long lDuration = Long.MAX_VALUE;
+					long iDuration = Long.MAX_VALUE;
 					//
 					while(!pLeft || !lLeft || !iLeft) {
 						if(!pLeft) {
-							long pDuration = doRequest(pAdr, pMode);
+							try {
+							pDuration = doRequest(pAdr, pMode);
+							}
+							catch (IOException | org.json.simple.parser.ParseException e) {
+								Platform.runLater(new Runnable() {
+					                 @Override public void run() {
+											internalFailure();
+					                 }
+					             });
+								resetAll();
+								return;
+							}
+							catch(NullPointerException n) {
+								Platform.runLater(new Runnable() {
+					                 @Override public void run() {
+											badRequest();
+					                 }
+					             });
+								resetAll();
+								return;
+							}
 							//how much time till, have to leave in Seconds
 							 times[0] = getTimeToGo(pTime, pDuration);
 							 //
@@ -272,21 +336,61 @@ public class ViewController implements Initializable {
 						
 						//Einagbe der 2 anderen Adressen zum testen auskommentiert
 						if(!lLeft) {
-							long lDuration = doRequest(lAdr, lMode);
+							try {
+							lDuration = doRequest(lAdr, lMode);
+							}
+							catch (IOException | org.json.simple.parser.ParseException e) {
+								Platform.runLater(new Runnable() {
+					                 @Override public void run() {
+											internalFailure();
+					                 }
+					             });
+								resetAll();
+								return;
+							}
+							catch(NullPointerException n) {
+								Platform.runLater(new Runnable() {
+					                 @Override public void run() {
+											badRequest();
+					                 }
+					             });
+								resetAll();
+								return;
+							}
 							//how much time till, have to leave in Seconds
 							 times[1] = getTimeToGo(lTime, lDuration);
 							 //
 							lLInfo.setText("Abfahrt: " + getLeaveTime(lTime, lDuration) + "\n" + "Dauer(min): " + (lDuration / 60 + 1));
 						}
 						if(!iLeft) {
-							long iDuration = doRequest(iAdr, iMode);
+							try {
+							iDuration = doRequest(iAdr, iMode);
+							}
+							catch (IOException | org.json.simple.parser.ParseException e) {
+								Platform.runLater(new Runnable() {
+					                 @Override public void run() {
+											internalFailure();
+					                 }
+					             });
+								resetAll();
+								return;
+							}
+							catch(NullPointerException n) {
+								Platform.runLater(new Runnable() {
+					                 @Override public void run() {
+											badRequest();
+					                 }
+					             });
+								resetAll();
+								return;
+							}
 							//how much time till, have to leave in Seconds
 							 times[2] = getTimeToGo(iTimeS, iDuration);
 							 //
 							iInfo.setText("Abfahrt: " + getLeaveTime(iTimeS, iDuration) + "\n" + "Dauer(min): " + (iDuration / 60 + 1));
 						}
 	
-						
+						running = true;
 						//
 						//
 						//Hier könntest du dir jetzt mit deiner Methode des long Array times holen
@@ -334,7 +438,7 @@ public class ViewController implements Initializable {
 		return hours + ":" + min;
 	}
 	
-	private synchronized long doRequest(String adr, String mode) {
+	private synchronized long doRequest(String adr, String mode) throws IOException, org.json.simple.parser.ParseException, NullPointerException {
 		adr.replace("ß", "ss");
 		adr.replace("ä", "ae");
 		adr.replace("ö", "oe");
@@ -344,57 +448,27 @@ public class ViewController implements Initializable {
 		adr.replace("Ü", "Ue");
 		String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + HOME + "&destinations=" + adr + "&mode=" + mode + "&departure_time=now&traffic_mode=best_guess&key=AIzaSyD5FrhCIemscBuwJYQwoO6wLRuHceirDaY";
 		System.out.println(url);
-			try {
-				
-				//Verwedung von httpClient
-				HttpClient httpclient = new DefaultHttpClient();
-				HttpGet httpget = new HttpGet(url);
-				HttpResponse response = httpclient.execute(httpget);
-				httpclient = null;
-
-				JSONObject jsonObj = (JSONObject) new JSONParser().parse(EntityUtils.toString(response.getEntity()));
-				System.out.println(jsonObj);
-				JSONArray jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("rows").toString().toString()));
-				jsonObj = (JSONObject) jsonArray.get(0);
-				jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("elements").toString()));
-				jsonObj = (JSONObject) jsonArray.get(0);
-				if (mode.equals("driving")) {
-				jsonObj = (JSONObject) new JSONParser().parse((jsonObj.get("duration_in_traffic").toString()));
-				}
-				else {
-				jsonObj = (JSONObject) new JSONParser().parse((jsonObj.get("duration").toString()));
-				}
-				return (long) jsonObj.get("value");
-				
-				
-			} catch (IOException e) {
-				Alert alertS = new Alert(AlertType.INFORMATION);
-				alertS.setTitle("Error");
-				alertS.setHeaderText("Internal Failure");
-				alertS.setContentText("An internal error has occourred. Please try agian.");
-				alertS.showAndWait();
-				resetAll();;
-				return Long.MAX_VALUE;
-			} catch (org.json.simple.parser.ParseException e) {
-				Alert alertF = new Alert(AlertType.INFORMATION);
-				alertF.setTitle("Error");
-				alertF.setHeaderText("Internal Failure");
-				alertF.setContentText("An internal error has occourred. Please try agian.");
-				alertF.showAndWait();
-				resetAll();
-				return Long.MAX_VALUE;
-			} catch (NullPointerException n) {
-//				Alert badRequest = new Alert(AlertType.INFORMATION);
-//				badRequest.setTitle("Warning");
-//				badRequest.setHeaderText("Bad Request");
-//				badRequest.setContentText("With the given Information there was no Request possible. Please Check your inserts!");
-//				badRequest.showAndWait();
-				System.out.println("NULLPOINTER JSON");
-				resetAll();
-				return Long.MAX_VALUE;
+		//Verwedung von httpClient
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpGet httpget = new HttpGet(url);
+		HttpResponse response = httpclient.execute(httpget);
+		httpclient = null;
+		JSONObject jsonObj = (JSONObject) new JSONParser().parse(EntityUtils.toString(response.getEntity()));
+		System.out.println(jsonObj);
+		JSONArray jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("rows").toString().toString()));
+		jsonObj = (JSONObject) jsonArray.get(0);
+		jsonArray = (JSONArray) new JSONParser().parse((jsonObj.get("elements").toString()));
+		jsonObj = (JSONObject) jsonArray.get(0);
+		if (mode.equals("driving")) {
+			jsonObj = (JSONObject) new JSONParser().parse((jsonObj.get("duration_in_traffic").toString()));
 			}
+		else {
+			jsonObj = (JSONObject) new JSONParser().parse((jsonObj.get("duration").toString()));
+			}
+		return (long) jsonObj.get("value");
 	}
 	
+			
 	private String getMode(String kind) {
 
 		if(kind.equals("zu Fuß")) {
@@ -418,6 +492,24 @@ public class ViewController implements Initializable {
 		alert.setHeaderText("No Connection");
 		alert.setContentText("No Conncetion to philips Hue possible!");
 		alert.showAndWait();
+	}
+	
+	private void internalFailure() {
+		Alert alertF = new Alert(AlertType.INFORMATION);
+		alertF.setTitle("Error");
+		alertF.setHeaderText("Internal Failure");
+		alertF.setContentText("An internal error has occourred. Please try agian.");
+		alertF.showAndWait();
+		resetAll();
+	}
+	
+	private void badRequest() {
+		Alert badRequest = new Alert(AlertType.INFORMATION);
+		badRequest.setTitle("Warning");
+		badRequest.setHeaderText("Bad Request");
+		badRequest.setContentText("With the given Information there was no Request possible. Please Check your inserts!");
+		badRequest.showAndWait();
+		resetAll();
 	}
 
 }
