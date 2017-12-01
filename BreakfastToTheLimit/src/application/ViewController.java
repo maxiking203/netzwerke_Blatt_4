@@ -376,15 +376,13 @@ public class ViewController implements Initializable {
 				e.printStackTrace();
 				resetAll();
 				return 0;
-			} catch (ParseException e) {
+			} catch (org.json.simple.parser.ParseException e) {
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Error");
 				alert.setHeaderText("Internal Failure");
 				alert.setContentText("An internal error has occourred. Please try agian.");
 				alert.showAndWait();
-				e.printStackTrace();
 				resetAll();
-				return 0;
 			}
 	}
 	
