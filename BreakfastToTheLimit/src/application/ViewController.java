@@ -375,7 +375,7 @@ public class ViewController implements Initializable {
 				alert.showAndWait();
 				e.printStackTrace();
 				resetAll();
-				return 0;
+				return Long.MAX_VALUE;
 			} catch (org.json.simple.parser.ParseException e) {
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Error");
@@ -383,6 +383,7 @@ public class ViewController implements Initializable {
 				alert.setContentText("An internal error has occourred. Please try agian.");
 				alert.showAndWait();
 				resetAll();
+				return Long.MAX_VALUE;
 			}
 	}
 	
