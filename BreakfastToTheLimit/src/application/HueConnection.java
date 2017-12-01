@@ -33,13 +33,13 @@ public class HueConnection {
 	public int numberOfLights = 3;
 	private int standSat = 254;
 	
-	public HueConnection(boolean labor) {
+	public HueConnection(boolean labor) throws IOException {
 		this.labor = labor;
 		putAllLightsWhite();
 		getAllInfo();
 	}
 	
-	public HueConnection() {
+	public HueConnection() throws IOException {
 		putAllLightsWhite();
 		getAllInfo();
 	}
@@ -70,11 +70,10 @@ public class HueConnection {
 		}
 	}
 	
-	public void checkAllLightColor(long[] seconds) {
+	public void checkAllLightColor(long[] seconds) throws IOException {
 		int orange = 3500;
 		int red = 0;
 		int lightNumber = 1;
-		
 		String noalert = "none";
 		for (long time : seconds) {
 			if (time < 0) {
@@ -96,7 +95,7 @@ public class HueConnection {
 		}
 	}
 	
-	private void putLights(int id, int color, String alert, int saturation) {
+	private void putLights(int id, int color, String alert, int saturation) throws IOException {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPut lightput; 
 		if (!labor) {
@@ -115,7 +114,8 @@ public class HueConnection {
 			StringEntity message = new StringEntity(light.toString());
 			lightput.setEntity(message);
 		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
+			System.err.println("Error Encoding");
+			throw new IOException();
 		}
 		try {
 			HttpResponse response = httpclient.execute(lightput);
@@ -123,28 +123,31 @@ public class HueConnection {
 				System.out.println("Light values changed");
 			}
 			else {
-				System.err.println("Error setting light value");
+				System.err.println("Error setting light value, HTTP Error code:" + response.getStatusLine().getStatusCode());
+				throw new IOException();
 			}
 		} catch (ClientProtocolException e) {
 			System.err.println("Error setting light value");
+			throw new IOException();
 		} catch (IOException e) {
 			System.err.println("Error setting light value");
+			throw new IOException();
 		}
 	}
 	
-	private void putAllLightsColor(int color) {
+	private void putAllLightsColor(int color) throws IOException {
 		for (int i = numberOfLights; i > 0; i--) {
 			putLights(i, color, "none", standSat);
 		}
 	}
 	
-	private void putAllLightsWhite() {
+	private void putAllLightsWhite() throws IOException {
 		for (int i = numberOfLights; i > 0; i--) {
 			putLights(i, 0, "none", 0);
 		}
 	}
 	
-	private void putAllLightsRedAlert() {
+	private void putAllLightsRedAlert() throws IOException {
 		for (int i = numberOfLights; i > 0; i--) {
 			putLights(i, 0, "lselect", standSat);
 		}
