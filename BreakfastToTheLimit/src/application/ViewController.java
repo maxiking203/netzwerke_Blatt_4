@@ -101,7 +101,7 @@ public class ViewController implements Initializable {
 	private boolean lLeft = false;
 	private boolean iLeft = false;
 	private long times[] = {0, 0, 0};
-	private HueConnection lightController = new HueConnection(false);
+	private HueConnection lightController;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -123,6 +123,13 @@ public class ViewController implements Initializable {
 		lLDone.setDisable(true);
 		iInfo.setEditable(true);
 		iDone.setDisable(true);
+		
+		try {
+			lightController  = new HueConnection(false);
+		}
+		catch(IOException e) {
+			lightError();
+		}
 
 		
 	}
@@ -131,24 +138,40 @@ public class ViewController implements Initializable {
 	public void pPEnd() {
 		pLeft = true;
 		pPInfo.setText("Paula already left");
-		times[0] = (Long) null;
+		times[0] = Long.MAX_VALUE;
+		try {
 		lightController.checkAllLightColor(times);
+		}
+		catch(IOException e) {
+			lightError();
+		}
+		
 	}
 	
 	//Lothar Late left for work
 	public void lLEnd() {
 		lLeft = true;
 		lLInfo.setText("Lothar already left");
-		times[1] = (Long) null;
+		times[1] = Long.MAX_VALUE;
+		try {
 		lightController.checkAllLightColor(times);
+		}
+		catch(IOException e) {
+			lightError();
+		}
 	}
 	
 	//I left for work
 	public void iEnd() {
 		iLeft = true;
 		iInfo.setText("I already left");
-		times[2] = (Long) null;
+		times[2] = Long.MAX_VALUE;
+		try {
 		lightController.checkAllLightColor(times);
+		}
+		catch(IOException e) {
+			lightError();
+		}
 	}
 	
 	public void resetAll() {
@@ -156,9 +179,14 @@ public class ViewController implements Initializable {
 		lLeft = true;
 		iLeft = true;
 		for(int i = 0; i < times.length; i++) {
-			times[i] = 0;
+			times[i] = Long.MAX_VALUE;
 		}
+		try {
 		lightController.checkAllLightColor(times);
+		}
+		catch(IOException e) {
+			lightError();
+		}
 		pPStreet.setText("");
 		pPNr.setText(""); 
 		pPPlace.setText("");
@@ -263,7 +291,12 @@ public class ViewController implements Initializable {
 						//
 						//Hier könntest du dir jetzt mit deiner Methode des long Array times holen
 						// index 0 Paula, index 1 Lothar, index 2 Ich
-						lightController.checkAllLightColor(times);
+						try {
+							lightController.checkAllLightColor(times);
+							}
+							catch(IOException e) {
+								lightError();
+							}
 						//
 						//
 						try {
@@ -343,7 +376,7 @@ public class ViewController implements Initializable {
 				e.printStackTrace();
 				resetAll();
 				return 0;
-			} catch (org.json.simple.parser.ParseException e) {
+			} catch (ParseException e) {
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Error");
 				alert.setHeaderText("Internal Failure");
@@ -370,6 +403,14 @@ public class ViewController implements Initializable {
 			return "driving";
 		}
 		
-	}	
+	}
+	
+	private void lightError() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("ERROR");
+		alert.setHeaderText("No Connection");
+		alert.setContentText("No Conncetion to philips Hue possible!");
+		alert.showAndWait();
+	}
 
 }
