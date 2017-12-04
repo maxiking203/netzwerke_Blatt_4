@@ -1,3 +1,5 @@
+//Maximilian Sachmann ganze Klasse
+
 package application;
 
 import java.io.BufferedReader;
@@ -131,13 +133,14 @@ public class ViewController implements Initializable {
 		iDone.setDisable(true);
 		
 		try {
-			lightController  = new HueConnection(false);
+			lightController  = new HueConnection(true);
 		}
 		catch(IOException e) {
 			lightError();
 		}
-
-		
+		catch(NullPointerException n) {
+			lightError();
+		}
 	}
 	
 	//Paul Pünktlich left for work
@@ -151,7 +154,9 @@ public class ViewController implements Initializable {
 		catch(IOException e) {
 			lightError();
 		}
-		
+		catch(NullPointerException n) {
+			lightError();
+		}
 	}
 	
 	//Lothar Late left for work
@@ -165,6 +170,9 @@ public class ViewController implements Initializable {
 		catch(IOException e) {
 			lightError();
 		}
+		catch(NullPointerException n) {
+			lightError();
+		}
 	}
 	
 	//I left for work
@@ -176,6 +184,9 @@ public class ViewController implements Initializable {
 		lightController.checkAllLightColor(times);
 		}
 		catch(IOException e) {
+			lightError();
+		}
+		catch(NullPointerException n) {
 			lightError();
 		}
 	}
@@ -192,6 +203,9 @@ public class ViewController implements Initializable {
 			lightController.checkAllLightColor(times);
 			}
 			catch(IOException e) {
+				lightError();
+			}
+			catch(NullPointerException n) {
 				lightError();
 			}
 		}
@@ -401,6 +415,9 @@ public class ViewController implements Initializable {
 							catch(IOException e) {
 								lightError();
 							}
+							catch(NullPointerException n) {
+								lightError();
+							}
 						//
 						//
 						try {
@@ -490,7 +507,7 @@ public class ViewController implements Initializable {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("ERROR");
 		alert.setHeaderText("No Connection");
-		alert.setContentText("No Conncetion to philips Hue possible!");
+		alert.setContentText("No Conncetion to philips Hue possible! Please establish connection and restart program.");
 		alert.showAndWait();
 	}
 	

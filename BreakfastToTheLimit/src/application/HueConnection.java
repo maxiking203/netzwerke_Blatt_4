@@ -1,3 +1,5 @@
+//Simon Braeuer ganze Klasse
+
 package application;
 
 import java.io.BufferedReader;
